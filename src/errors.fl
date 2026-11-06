@@ -1,0 +1,6 @@
+module http;
+
+export error HttpError {
+    InvalidMethod,
+}
+

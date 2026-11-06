@@ -1,5 +1,28 @@
 module http;
 
-export i32 answer() {
-    return 42;
+@imports :: lib::std::containers::collections as coll;
+
+export enum HttpVersion: u8 {
+    default Http1_1
 }
+
+export structure Method {
+    private string token;    
+};
+
+export structure Header {
+    private string name;
+    private own []u8 value;
+};
+
+export structure Request {
+    private RequestLine line;
+    private coll::Array<Header> headerFields;
+    private own []u8 body;
+};
+
+structure RequestLine {
+    Method method;
+    string target;
+    HttpVersion version;
+};

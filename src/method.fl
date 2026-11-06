@@ -1,0 +1,51 @@
+module http;
+
+@imports
+    :: lib::std::bytes::sequence
+    :: lib::std::text::ascii;
+
+export const stringv METHOD_GET = "GET";
+export const stringv METHOD_POST = "POST";
+const stringv TOKEN_SYMBOLS = "!#$%&'*+-.^_`|~";
+
+(Method, error) Method::parse(stringv token) {
+    if !token_valid(token) {
+        return (none, HttpError.InvalidMethod);
+    } 
+
+    return (build Method {
+        self.token = token;
+    }, none);
+}
+
+error Method::set(&self, stringv token) {
+    if !token_valid(token) {
+        return HttpError.InvalidMethod;
+    }
+
+    self->token = token.cast<string>;
+    return none;
+}
+
+bool token_valid(stringv token) {
+    if token.len() == 0 {
+        return false;
+    }
+
+    for (u32 _, char val) = range token {
+        if !tchar_valid(val) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool tchar_valid(char value) {
+    if ascii::is_ascii_alphanumeric(value) {
+        return true;
+    }
+
+    _, found := sequence::index_of_byte(TOKEN_SYMBOLS.cast<[]const u8>, value);
+    return found;
+}
